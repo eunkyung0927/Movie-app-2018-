@@ -8,45 +8,29 @@ class App extends Component {
   //Render: componentWillmount() -> render() -> componentDidMount()
   //Update: componentWillReceiveProps() -> shouldComponentUpdate() -> componentWillUpdate() -> render() -> componentDidUpdate()
  
-  state ={
-   
-    
-  }
 
+  state={}
   componentDidMount(){
-    setTimeout(() =>{
-        this.setState({
-          movies :[
-            {
-              title:"Intimate Strangers",
-              poster:"http://image.cine21.com/resize/cine21/poster/2018/1106/11_51_55__5be101cb4ac53[X230,330].jpg"
-            },
-            {
-              title:"Bohemian Rhapsody",
-              poster:"https://www.musiclinkup.com/upload/post_image/15318345662197.jpg"
-            },
-            {
-              title:"The Nutcracker",
-              poster:"https://img.insight.co.kr/static/2018/09/13/700/66t9dr0kg6f1bdbyvjw2.jpg"
-            },
-            {
-              title:"A Star Is Born",
-              poster:"https://cdn.cinematerial.com/p/500x/0krc77b4/a-star-is-born-portuguese-movie-poster.jpg"
-            },
-            {
-              title:"12 Feet Deep",
-              poster:"https://images-na.ssl-images-amazon.com/images/I/81N5lrqQmOL._RI_.jpg"
-            }
-          ]
-        })
-    },5000)
+   this._getMovies();
   }
 
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index )=>{
-      return <Movie title={movie.title} poster={movie.poster} key={index}/>
+    const movies = this.state.movies.map(movie => {
+      return <Movie title={movie.title} poster={movie.large_cover_image} key={movie.id}/>
     })
-    return movies
+    return movies 
+  }
+  _getMovies = async () => {
+    const movies = await this._callApi()
+    this.setState({
+      movies
+    })
+  }  
+  _callApi = () =>{
+     return fetch('https://yts.am/api/v2/list_movies.json?sort_by=download_count?sort_by=rating')
+    .then(response => response.json())
+    .then(json => json.data.movies)
+    .catch(err => console.log(err))
   }
   render() {
     return (
